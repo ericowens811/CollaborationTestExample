@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jwt", "Jwt\Jwt.csproj", "{C2EAACE9-78EE-4A6D-829C-E1F4D273A08B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiAndClient", "ApiAndClient\ApiAndClient.csproj", "{ADEB7C73-257D-4752-B144-B52B04CB347D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiAndClientTests", "ApiAndClientTests\ApiAndClientTests.csproj", "{D581D169-1320-4807-BB26-A5A64726D458}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C2EAACE9-78EE-4A6D-829C-E1F4D273A08B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2EAACE9-78EE-4A6D-829C-E1F4D273A08B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2EAACE9-78EE-4A6D-829C-E1F4D273A08B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2EAACE9-78EE-4A6D-829C-E1F4D273A08B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADEB7C73-257D-4752-B144-B52B04CB347D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADEB7C73-257D-4752-B144-B52B04CB347D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADEB7C73-257D-4752-B144-B52B04CB347D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADEB7C73-257D-4752-B144-B52B04CB347D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D581D169-1320-4807-BB26-A5A64726D458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D581D169-1320-4807-BB26-A5A64726D458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D581D169-1320-4807-BB26-A5A64726D458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D581D169-1320-4807-BB26-A5A64726D458}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {085B2DF2-92DB-4577-8FC6-21D0693CAE6E}
+	EndGlobalSection
+EndGlobal
