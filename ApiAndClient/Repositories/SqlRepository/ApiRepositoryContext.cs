@@ -1,5 +1,4 @@
 ﻿using ApiAndClient.Entities;
-using BridgePacketRateLimiterApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiAndClient.Repositories.SqlRepository
@@ -24,9 +23,6 @@ namespace ApiAndClient.Repositories.SqlRepository
                 .Entity<ResourceEntity>()
                 .HasIndex(i => i.ResourceId)
                 .IsUnique();
-            modelBuilder
-                .Entity<ResourceEntity>()
-                .HasIndex(i => i.Tag);
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ApiAndClient.Entities;
-using BridgePacketRateLimiterApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiAndClient.Repositories.SqlRepository
@@ -28,37 +27,19 @@ namespace ApiAndClient.Repositories.SqlRepository
             await _context.SaveChangesAsync();
         }
 
+        public async Task<List<MessageEntity>> GetAllMessagesAsync()
+        {
+            var resources = await _context
+                .Messages
+                .ToListAsync();
+            return resources;
+        }
+
         public async Task<List<ResourceEntity>> GetAllResourcesAsync()
         {
             var resources = await _context
                 .Resources
                 .Include(b => b.Messages)
-                .ToListAsync();
-            return resources;
-        }
-
-        public Task<List<ResourceEntity>> GetAllMatureResourcesAsync(long now)
-        {
-            var resources = _context
-                .Resources
-                .OrderBy(e => e.NextTimeInMilliseconds)
-                .Include(b => b.Messages)
-                .Where
-                (t => 
-                    (t.NextTimeInMilliseconds < now && t.Tag == null) ||
-                    (t.TagOrphanedTime != 0 && t.TagOrphanedTime < now)
-                )
-                .ToListAsync();
-            return resources;
-        }
-
-        public async Task<List<ResourceEntity>> GetTaggedResourcesAsync(string tag)
-        {
-            var resources = await _context
-                .Resources
-                .OrderBy(e => e.NextTimeInMilliseconds)
-                .Include(r => r.Messages)
-                .Where(t => t.Tag == tag)
                 .ToListAsync();
             return resources;
         }
@@ -77,18 +58,9 @@ namespace ApiAndClient.Repositories.SqlRepository
         {
             _context.Add(resource);
         }
-
         public void DeleteResource(ResourceEntity resource)
         {
             _context.Remove(resource);
-        }
-
-        public async Task<List<MessageEntity>> GetAllMessagesAsync()
-        {
-            var resources = await _context
-                .Messages
-                .ToListAsync();
-            return resources;
         }
     }
 }

@@ -25,13 +25,22 @@ namespace ApiAndClient.Controllers
             _logger = logger;
         }
 
+        [HttpGet("messages")]
+        public async Task<IActionResult> GetMessagesAsync()
+        {
+            _logger.LogDebug("Start GetAllMessagesAsync");
+            var resources = await _service.GetAllMessagesAsync();
+            _logger.LogInformation("End GetAllMessagesAsync");
+            return Ok(resources); 
+        }
+
         [HttpGet("resources")]
         public async Task<IActionResult> GetResourcesAsync()
         {
             _logger.LogDebug("Start GetAllResourcesAsync");
             var resources = await _service.GetAllResourcesAsync();
             _logger.LogInformation("End GetAllResourcesAsync");
-            return Ok(resources); 
+            return Ok(resources);
         }
 
         [HttpPost("resources/{resourceId}/messages")]
@@ -43,13 +52,15 @@ namespace ApiAndClient.Controllers
             return NoContent();
         }
 
-        [HttpGet("resources/messages")]
-        public async Task<IActionResult> GetMessagesToSendAsync()
+        [HttpPost("resources")]
+        public async Task<IActionResult> AddResourceAsync([FromBody] ResourceEntity resource)
         {
-            _logger.LogDebug("Start GetMessagesToSendAsync");
-            var messages = await _service.GetMessagesToSendAsync();
-            _logger.LogInformation("End GetMessagesToSendAsync");
-            return Ok(messages);
+            _logger.LogDebug($"Start AddResourceAsync");
+            await _service.AddResourceAsync(resource);
+            _logger.LogInformation($"ResourceId: {resource.ResourceId} | End AddResourceAsync");
+            return NoContent();
         }
+
+
     }
 }

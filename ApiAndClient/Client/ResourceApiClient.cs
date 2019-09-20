@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ApiAndClient.Entities;
 using ApiAndClient.Interfaces;
-using BridgePacketRateLimiterApi.Entities;
 using Newtonsoft.Json;
 
 namespace ApiAndClient.Client
@@ -33,14 +32,11 @@ namespace ApiAndClient.Client
             await _client.SendAsync(request);
         }
 
-        public async Task<List<MessageEntity>> GetMessagesToSendAsync()
+        public async Task AddResourceAsync(ResourceEntity message)
         {
-            var endpoint = $"{_resourceUrls.ResourceUrl}/messages";
-            var request = _requestBuilder.Build(HttpMethod.Get, endpoint);
-            var response = await _client.SendAsync(request);
-            var contentJson = await response.Content.ReadAsStringAsync();
-            var data =  JsonConvert.DeserializeObject<List<MessageEntity>>(contentJson);
-            return data;
+            var endpoint = $"{_resourceUrls.ResourceUrl}";
+            var request = _requestBuilder.Build(HttpMethod.Post, endpoint, message);
+            await _client.SendAsync(request);
         }
 
         public async Task<List<ResourceEntity>> GetAllResourcesAsync()
@@ -49,6 +45,15 @@ namespace ApiAndClient.Client
             var response = await _client.SendAsync(request);
             var contentJson = await response.Content.ReadAsStringAsync();
             var data = JsonConvert.DeserializeObject<List<ResourceEntity>>(contentJson);
+            return data;
+        }
+
+        public async Task<List<MessageEntity>> GetAllMessagesAsync()
+        {
+            var request = _requestBuilder.Build(HttpMethod.Get, _resourceUrls.MessageUrl);
+            var response = await _client.SendAsync(request);
+            var contentJson = await response.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject<List<MessageEntity>>(contentJson);
             return data;
         }
     }

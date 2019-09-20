@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using ApiAndClient.Entities;
 using ApiAndClient.Interfaces;
 using ApiAndClient.Repositories;
-using BridgePacketRateLimiterApi.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -50,7 +49,13 @@ namespace ApiAndClient.Services
             return result;
         }
 
-        public async Task AddMessageAsync(long resourceId, MessageEntity message, int retryCount = 0)
+        public async Task<List<MessageEntity>> GetAllMessagesAsync()
+        {
+            var result = await _repository.GetAllMessagesAsync();
+            return result;
+        }
+
+        public async Task AddMessageAsync(long resourceId, MessageEntity message)
         {
             try
             {
@@ -70,83 +75,22 @@ namespace ApiAndClient.Services
             catch (DbUpdateException) // Concurrency, Uniqueness, or other data exception
             {
                 _logger.LogWarning($"ResourceId: {resourceId} | DbUpdateException AddMessageAsync");
-                if (retryCount > MaxRetries)
-                {
-                    throw;
-                }
-                else
-                {
-                    _repository.ResetContext();
-                    message.Id = 0;
-                    await AddMessageAsync(resourceId, message, ++retryCount);
-                }
             }
         }
 
-        public async Task<List<MessageEntity>> GetMessagesToSendAsync(int retryCount = 0)
+        public async Task AddResourceAsync(ResourceEntity resource)
         {
-            List<MessageEntity> response = null;
             try
             {
-                _logger.LogDebug("Start GetMessagesToSendAsync");
-                var now = GetNowInMilliseconds();
-                var tagOrphanedTime = now + TagOrphanDelayInMilliseconds;
-                var tag = GetTag();
-                response = new List<MessageEntity>();
-                var resources = (await _repository.GetAllMatureResourcesAsync(now)).ToList();
-                if (resources.Count > 0)
-                {
-                    foreach (var resource in resources)
-                    {
-                        resource.Tag = tag;
-                        resource.TagOrphanedTime = tagOrphanedTime;
-                    }
-
-                    await _repository.SaveChangesAsync();
-
-                    // if we are here, then we have a coherent list of resources to process for sending              
-                    _repository.ResetContext();
-                    var taggedResources = (await _repository.GetTaggedResourcesAsync(tag)).ToList();
-
-                    foreach (var resource in taggedResources)
-                    {
-                        var sendable = resource.GetNextMessageToSend();
-                        if (resource.Messages.Count == 0)
-                        {
-                            _repository.DeleteResource(resource);
-                        }
-                        else
-                        {
-                            resource.NextTimeInMilliseconds = GetNowInMilliseconds() + ResourceEntity.DefaultWaitTimeInMilliseconds;
-                        }
-
-                        response.Add(sendable);
-                    }
-
-                    foreach (var resource in taggedResources)
-                    {
-                        resource.ClearTags();
-                    }
-
-                    await _repository.SaveChangesAsync();
-                    _logger.LogDebug("End GetMessagesToSendAsync");
-                }
+                _logger.LogDebug("Start AddResourceAsync");
+                _repository.AddResource(resource);
+                await _repository.SaveChangesAsync();
+                _logger.LogDebug("End AddResourceAsync");
             }
             catch (DbUpdateException) // Concurrency, Uniqueness, or other data exception
             {
-                _logger.LogWarning("DbUpdateException GetMessagesToSendAsync");
-                _repository.ResetContext();                
-                if (retryCount > MaxRetries)
-                {
-                    throw;
-                }
-                else
-                {
-                    await GetMessagesToSendAsync(++retryCount);
-                }
+                _logger.LogWarning($"DbUpdateException AddResourceAsync");
             }
-
-            return response;
         }
     }
 }
